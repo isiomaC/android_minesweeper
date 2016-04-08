@@ -3,6 +3,7 @@ package eu.hulsch.andreas.minesweeper;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -39,7 +40,23 @@ public class MainActivity extends AppCompatActivity
         this.numberOfMinesMarked = (TextView) findViewById(R.id.number_mines_marked);
         this.btnReset = (Button) findViewById(R.id.btn_reset);
         this.btnClickMode = (Button) findViewById(R.id.btn_click_mode);
+
+        this.btnReset.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                reset();
+            }
+        });
     }
+    private void reset()
+    {
+        this.initCells();
+        this.minesweeperCustomView.setFailed(false);
+    }
+
+
     private void initCells()
     {
         this.minesweepterCells = new MinesweepterCell[rows_columns][rows_columns];

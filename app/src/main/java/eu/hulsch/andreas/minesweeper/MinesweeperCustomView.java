@@ -41,6 +41,9 @@ public class MinesweeperCustomView extends View
     private Point touchedDownCell;
     private MinesweepterCell[][] minesweepterCells;
 
+    private boolean uncoverMode = true;
+    private boolean failed = false;
+
     // ctor
     public MinesweeperCustomView(Context context)
     {
@@ -60,10 +63,15 @@ public class MinesweeperCustomView extends View
     public void setArray(MinesweepterCell[][] minesweepterCells)
     {
         this.minesweepterCells = minesweepterCells;
+        invalidate();
     }
 
     private void init()
     {
+        this.uncoverMode = true;
+        this.failed = false;
+
+
         this.cellTextSize = getResources().getDimension(R.dimen.cell_text_size);
 
         paint_black = new Paint();
@@ -170,31 +178,35 @@ public class MinesweeperCustomView extends View
 
     public boolean onTouchEvent(MotionEvent event)
     {
-        // return super.onTouchEvent(event);
-        if(event.getAction() == MotionEvent.ACTION_DOWN)
+        if(!this.failed)
         {
-            double x = (double) event.getX();
-            double y = (double) event.getY();
-            int column = (int) (x / cell_width_height);
-            int row = (int) (y / cell_width_height);
-            this.touchedDownCell = new Point(row, column);
-
-        }
-        if(event.getAction() == MotionEvent.ACTION_UP)
-        {
-            double x = (double) event.getX();
-            double y = (double) event.getY();
-            int row = (int) (y / cell_width_height);
-            int column = (int) (x / cell_width_height);
-
-            // same cell pressed and released
-            if(this.touchedDownCell.equals(row, column))
-            {
-                this.minesweepterCells[row][column].setCovered(false);
+            // return super.onTouchEvent(event);
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                double x = (double) event.getX();
+                double y = (double) event.getY();
+                int column = (int) (x / cell_width_height);
+                int row = (int) (y / cell_width_height);
+                this.touchedDownCell = new Point(row, column);
 
             }
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                double x = (double) event.getX();
+                double y = (double) event.getY();
+                int row = (int) (y / cell_width_height);
+                int column = (int) (x / cell_width_height);
+
+                // same cell pressed and released
+                if (this.touchedDownCell.equals(row, column)) {
+                    this.minesweepterCells[row][column].setCovered(false);
+                    // uncovered a mine
+                    if (this.minesweepterCells[row][column].getMineCount() == -1) {
+                        this.failed = true;
+                    }
+
+                }
+            }
+            invalidate();
         }
-        invalidate();
         return true;
     }
 
@@ -308,6 +320,24 @@ public class MinesweeperCustomView extends View
         bounds.left += (areaRect.width() - bounds.right) / 2.0f;
         bounds.top += (areaRect.height() - bounds.bottom) / 2.0f;
         canvas.drawText(cellText, bounds.left, bounds.top - paint.ascent(), paint);
+    }
+
+
+
+    public boolean isFailed() {
+        return failed;
+    }
+
+    public void setFailed(boolean failed) {
+        this.failed = failed;
+    }
+
+    public boolean isUncoverMode() {
+        return uncoverMode;
+    }
+
+    public void setUncoverMode(boolean uncoverMode) {
+        this.uncoverMode = uncoverMode;
     }
 
 
