@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity
 
 
         }
-
         // init the cells
         for(int i = 0; i < this.minesweepterCells.length; i++)
         {

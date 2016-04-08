@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,7 +27,9 @@ public class MinesweeperCustomView extends View
     private Paint paint_black;
     private Paint paint_white;
     private Paint paint_gray;
-
+    private Paint paint_red;
+    private Paint paint_black_text;
+    private float cellTextSize;
 
     private float[] pointsVertical;
     private float[] pointsHorizontal;
@@ -56,17 +60,28 @@ public class MinesweeperCustomView extends View
 
     private void init()
     {
+        this.cellTextSize = getResources().getDimension(R.dimen.cell_text_size);
+
         paint_black = new Paint();
         paint_black.setColor(Color.BLACK);
+
+        paint_black_text = new Paint();
+        paint_black_text.setColor(Color.BLACK);
+        paint_black_text.setTextSize(cellTextSize);
+
+
 
         paint_white = new Paint();
         paint_white.setColor(Color.WHITE);
         paint_white.setStyle(Paint.Style.STROKE);
         paint_white.setStrokeWidth(1.0f);
 
-
         paint_gray = new Paint();
         paint_gray.setColor(Color.GRAY);
+
+        paint_red = new Paint();
+        paint_red.setColor(Color.RED);
+
 
     }
 
@@ -88,7 +103,20 @@ public class MinesweeperCustomView extends View
             {
                 if(!this.minesweepterCells[i][j].isCovered())
                 {
-                    drawCell(canvas,i,j,this.paint_gray);
+
+                    if(this.minesweepterCells[i][j].getMineCount() == -1)
+                    {
+                        drawCell(canvas,i,j,this.paint_red, "M", this.paint_black_text);
+                    }
+                    else
+                    {
+                        drawCell(canvas,i,j,this.paint_gray);
+                    }
+
+
+                }
+                else
+                {
 
                 }
             }
@@ -197,22 +225,47 @@ public class MinesweeperCustomView extends View
     public void drawCell(Canvas canvas, int row, int column, Paint cellBackgroundColor)
     {
         // left, top, right, bot, color
-
         float left = (float) ((column * this.cell_width_height) + CELL_PADDING);
         float top = (float) ((row *this.cell_width_height) + CELL_PADDING);
         float right = (float) (((column+1) * this.cell_width_height) - CELL_PADDING);
         float bottom = (float) (((row+1) *this.cell_width_height) - CELL_PADDING);
-        canvas.drawRect(left,top,right,bottom, this.paint_gray);
-        Log.d("dqwdq", "height: " + (bottom-top) + " width: " + (right-left) + " row " + row + " column: " + column);
+
+        canvas.drawRect(left, top, right, bottom, cellBackgroundColor);
+        // Log.d("dqwdq", "height: " + (bottom-top) + " width: " + (right-left) + " row " + row + " column: " + column);
 
 
     }
     public void drawCell(Canvas canvas, int row, int column, Paint cellBackgroundColor, String cellText, Paint cellTextColor)
     {
-        drawCell(canvas, row, column,cellBackgroundColor);
 
+
+        drawCell(canvas, row, column, cellBackgroundColor);
+        //float startX = (float) (((column * this.cell_width_height) + CELL_PADDING) + (this.cell_width_height/3));
+        //float startY = (float) (((row+1) *this.cell_width_height) - (this.cell_width_height/2) );
+         drawText(canvas, cellTextColor, cellText, row, column);
+        // canvas.drawText(cellText, startX, startY, cellTextColor);
     }
 
+    public void drawText(Canvas canvas, Paint paint, String cellText, int row, int column)
+    {
+
+        int left = (int) ((column * this.cell_width_height) + CELL_PADDING);
+        int top = (int) ((row *this.cell_width_height) + CELL_PADDING);
+        int right = (int) (((column+1) * this.cell_width_height) - CELL_PADDING);
+        int bottom =  (int) (((row+1) *this.cell_width_height) - CELL_PADDING);
+        // the display area.
+        Rect areaRect = new Rect(left, top, right, bottom);
+
+        RectF bounds = new RectF(areaRect);
+        // measure text width
+        bounds.right = paint.measureText(cellText, 0, cellText.length());
+        // measure text height
+        bounds.bottom = paint.descent() - paint.ascent();
+
+        bounds.left += (areaRect.width() - bounds.right) / 2.0f;
+        bounds.top += (areaRect.height() - bounds.bottom) / 2.0f;
+        canvas.drawText(cellText, bounds.left, bounds.top - paint.ascent(), paint);
+    }
 
 
 
