@@ -11,6 +11,9 @@ import android.view.View;
  */
 public class MinesweeperCustomView extends View
 {
+    private int width_height;
+    private int cell_width_height;
+
     // ctor
     public MinesweeperCustomView(Context context)
     {
@@ -45,4 +48,22 @@ public class MinesweeperCustomView extends View
         return super.onTouchEvent(event);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+    {
+        int height = getMeasuredHeight();
+        int width = getMeasuredWidth();
+
+        if (height >= width)
+        {
+            this.width_height = width;
+        }
+        else
+        {
+            this.width_height = height;
+        }
+        setMeasuredDimension(this.width_height, this.width_height);
+
+
+    }
 }
