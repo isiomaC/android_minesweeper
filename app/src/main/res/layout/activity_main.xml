@@ -28,13 +28,17 @@
 
     </LinearLayout>
 
+    <eu.hulsch.andreas.minesweeper.MinesweeperCustomView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reset"
             android:id="@+id/btn_reset" />
