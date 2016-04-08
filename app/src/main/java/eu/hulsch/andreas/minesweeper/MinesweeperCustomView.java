@@ -29,6 +29,10 @@ public class MinesweeperCustomView extends View
     private Paint paint_gray;
     private Paint paint_red;
     private Paint paint_black_text;
+    private Paint paint_blue_text;
+    private Paint paint_green_text;
+    private Paint paint_yellow_text;
+    private Paint paint_red_text;
     private float cellTextSize;
 
     private float[] pointsVertical;
@@ -69,6 +73,22 @@ public class MinesweeperCustomView extends View
         paint_black_text.setColor(Color.BLACK);
         paint_black_text.setTextSize(cellTextSize);
 
+        paint_blue_text = new Paint();
+        paint_blue_text.setColor(Color.BLUE);
+        paint_blue_text.setTextSize(cellTextSize);
+
+        paint_green_text = new Paint();
+        paint_green_text.setColor(Color.GREEN);
+        paint_green_text.setTextSize(cellTextSize);
+
+        paint_yellow_text = new Paint();
+        paint_yellow_text.setColor(Color.YELLOW);
+        paint_yellow_text.setTextSize(cellTextSize);
+
+        paint_red_text = new Paint();
+        paint_red_text.setColor(Color.RED);
+        paint_red_text.setTextSize(cellTextSize);
+
 
 
         paint_white = new Paint();
@@ -103,17 +123,40 @@ public class MinesweeperCustomView extends View
             {
                 if(!this.minesweepterCells[i][j].isCovered())
                 {
-
-                    if(this.minesweepterCells[i][j].getMineCount() == -1)
+                    switch (this.minesweepterCells[i][j].getMineCount())
                     {
-                        drawCell(canvas,i,j,this.paint_red, "M", this.paint_black_text);
-                    }
-                    else
-                    {
-                        drawCell(canvas,i,j,this.paint_gray);
-                    }
+                        case -1:
+                            drawCell(canvas,i,j,this.paint_red, "M", this.paint_black_text);
+                            break;
+                        case 0:
+                            drawCell(canvas,i,j,this.paint_gray);
+                            break;
+                        case 1:
+                            drawCell(canvas,i,j,this.paint_gray, "1", this.paint_green_text);
+                            break;
+                        case 2:
+                            drawCell(canvas,i,j,this.paint_gray, "2", this.paint_blue_text);
+                            break;
+                        case 3:
+                            drawCell(canvas,i,j,this.paint_gray, "3", this.paint_yellow_text);
+                            break;
+                        case 4:
+                            drawCell(canvas,i,j,this.paint_gray, "4", this.paint_red_text);
+                            break;
+                        case 5:
+                            drawCell(canvas,i,j,this.paint_gray, "5", this.paint_red_text);
+                            break;
+                        case 6:
+                            drawCell(canvas,i,j,this.paint_gray, "6", this.paint_red_text);
+                            break;
+                        case 7:
+                            drawCell(canvas,i,j,this.paint_gray, "7", this.paint_red_text);
+                            break;
+                        case 8:
+                            drawCell(canvas,i,j,this.paint_gray, "8", this.paint_red_text);
+                            break;
 
-
+                    }
                 }
                 else
                 {
