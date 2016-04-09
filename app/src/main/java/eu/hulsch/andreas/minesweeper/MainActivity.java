@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,22 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onMarkedCountChanged(int count) {
                 setTextViewMinesMarkedCount(count);
+            }
+        });
+
+        this.minesweeperCustomView.addMinesweeperGameFinishedListener(new MinesweeperCustomView.IMinesweeperGameFinishedListener()
+        {
+            @Override
+            public void onFinished(boolean success)
+            {
+                if(success)
+                {
+                    Toast.makeText(getApplicationContext(),"Congrats! you won!", Toast.LENGTH_LONG).show();
+                }
+                if(!success)
+                {
+                    Toast.makeText(getApplicationContext(),"That was a mine! \n Press reset to play again!", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

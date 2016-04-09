@@ -10,6 +10,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class MinesweeperCustomView extends View
 {
     private static final float CELL_PADDING = 3.0f;
     private ArrayList<IMinesMarkedCountListener> markedCountListeners;
+    private ArrayList<IMinesweeperGameFinishedListener> gameFinishedListeners;
 
     private float width_height;
     private float cell_width_height;
@@ -73,6 +75,7 @@ public class MinesweeperCustomView extends View
     private void init()
     {
         markedCountListeners = new ArrayList<>();
+        gameFinishedListeners = new ArrayList<>();
         this.uncoverMode = true;
         this.failed = false;
         this.markedCount = 0;
@@ -238,7 +241,7 @@ public class MinesweeperCustomView extends View
                             // uncovered a mine
                             if (this.minesweeperCells[row][column].getMineCount() == -1)
                             {
-                                this.failed = true;
+                                this.setFailed(true);
                                 this.uncover_all_mines();
                             }
                             else if(this.minesweeperCells[row][column].getMineCount() == 0)
@@ -269,11 +272,39 @@ public class MinesweeperCustomView extends View
 
                         }
                     }
+                    if(check_if_game_won())
+                    {
+                        for(IMinesweeperGameFinishedListener listener : gameFinishedListeners)
+                        {
+                            listener.onFinished(true);
+                        }
+                    }
+
                 }
             }
 
         }
         invalidate();
+        return true;
+    }
+
+    private boolean check_if_game_won()
+    {
+        if(this.failed)
+        {
+            return false;
+        }
+        for (int i = 0; i < this.minesweeperCells.length; i++)
+        {
+            for (int j = 0; j < this.minesweeperCells[i].length; j++)
+            {
+                if(!this.minesweeperCells[i][j].isMarked() && this.minesweeperCells[i][j].isCovered())
+                {
+                   return false;
+                }
+
+            }
+        }
         return true;
     }
 
@@ -440,7 +471,15 @@ public class MinesweeperCustomView extends View
     public boolean isFailed() {
         return failed;
     }
-    public void setFailed(boolean failed) {
+    public void setFailed(boolean failed)
+    {
+        if(failed)
+        {
+            for(IMinesweeperGameFinishedListener listener : gameFinishedListeners)
+            {
+                listener.onFinished(false);
+            }
+        }
         this.failed = failed;
     }
     public boolean isUncoverMode() {
@@ -471,6 +510,18 @@ public class MinesweeperCustomView extends View
     public interface IMinesMarkedCountListener
     {
         void onMarkedCountChanged(int count);
+    }
+    public void addMinesweeperGameFinishedListener(IMinesweeperGameFinishedListener listener)
+    {
+        this.gameFinishedListeners.add(listener);
+    }
+    public void removeMinesweeperGameFinishedListener(IMinesweeperGameFinishedListener listener)
+    {
+        this.gameFinishedListeners.remove(listener);
+    }
+    public interface IMinesweeperGameFinishedListener
+    {
+        void onFinished(boolean success);
     }
 
 
