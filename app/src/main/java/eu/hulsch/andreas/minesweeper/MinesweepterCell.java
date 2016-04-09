@@ -7,7 +7,7 @@ public class MinesweepterCell
 {
     private boolean covered;
     private boolean marked;
-    private int mineCount;
+    private int mineCount; // -1 for a mine
 
     private int row;
     private int column;

@@ -15,17 +15,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="total number of mines"
         android:id="@+id/number_mines"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="number of mines marked"
-            android:id="@+id/number_mines_marked" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/number_mines_marked" />
 
     </LinearLayout>
 
@@ -44,13 +43,12 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reset"
+            android:text="@string/btn_reset_string"
             android:id="@+id/btn_reset" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Uncover Mode"
             android:id="@+id/btn_click_mode" />
 
     </LinearLayout>
