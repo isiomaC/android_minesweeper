@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Minesweeper</string>
     <string name="number_mines_marked">Mines marked: %1$d</string>
-    <string name="total_number_of_mines">Mines: %1$d</string>
+    <string name="total_number_of_mines">Mines total: %1$d</string>
     <string name="btn_reset_string">Reset</string>
+    <string name="marking_mode">Marking Mode</string>
+    <string name="uncover_mode">Uncover Mode</string>
 </resources>

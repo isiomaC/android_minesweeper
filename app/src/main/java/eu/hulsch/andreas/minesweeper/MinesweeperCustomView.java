@@ -5,11 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -44,7 +42,7 @@ public class MinesweeperCustomView extends View
     private float[] pointsHorizontal;
 
     private Point touchedDownCell;
-    private MinesweepterCell[][] minesweepterCells;
+    private MinesweeperCell[][] minesweeperCells;
 
     private boolean uncoverMode = true;
     private boolean failed = false;
@@ -66,9 +64,9 @@ public class MinesweeperCustomView extends View
         init();
     }
 
-    public void setArray(MinesweepterCell[][] minesweepterCells)
+    public void setArray(MinesweeperCell[][] minesweeperCells)
     {
-        this.minesweepterCells = minesweepterCells;
+        this.minesweeperCells = minesweeperCells;
         invalidate();
     }
 
@@ -78,7 +76,6 @@ public class MinesweeperCustomView extends View
         this.uncoverMode = true;
         this.failed = false;
         this.markedCount = 0;
-
 
         this.cellTextSize = getResources().getDimension(R.dimen.cell_text_size);
 
@@ -136,16 +133,23 @@ public class MinesweeperCustomView extends View
         canvas.drawLines(this.pointsVertical, this.paint_white);
 
 
-        for(int i = 0; i < this.minesweepterCells.length; i++)
+        for(int i = 0; i < this.minesweeperCells.length; i++)
         {
-            for(int j = 0; j < this.minesweepterCells[i].length; j++)
+            for(int j = 0; j < this.minesweeperCells[i].length; j++)
             {
-                if(!this.minesweepterCells[i][j].isCovered())
+                if(!this.minesweeperCells[i][j].isCovered())
                 {
-                    switch (this.minesweepterCells[i][j].getMineCount())
+                    switch (this.minesweeperCells[i][j].getMineCount())
                     {
                         case -1:
-                            drawCell(canvas,i,j,this.paint_red, "M", this.paint_black_text);
+                            if(this.minesweeperCells[i][j].isMarked())
+                            {
+                                drawCell(canvas,i,j,this.paint_yellow, "M", this.paint_black_text);
+                            }
+                            else
+                            {
+                                drawCell(canvas,i,j,this.paint_red, "M", this.paint_black_text);
+                            }
                             break;
                         case 0:
                             drawCell(canvas,i,j,this.paint_gray);
@@ -181,7 +185,7 @@ public class MinesweeperCustomView extends View
                 else
                 {
 
-                    if(this.minesweepterCells[i][j].isMarked())
+                    if(this.minesweeperCells[i][j].isMarked())
                     {
                         drawCell(canvas,i,j,this.paint_yellow);
                     }
@@ -228,36 +232,37 @@ public class MinesweeperCustomView extends View
                     if(this.uncoverMode)
                     {
                         // not marked
-                        if(!this.minesweepterCells[row][column].isMarked())
+                        if(!this.minesweeperCells[row][column].isMarked())
                         {
-                            this.minesweepterCells[row][column].setCovered(false);
+                            this.minesweeperCells[row][column].setCovered(false);
                             // uncovered a mine
-                            if (this.minesweepterCells[row][column].getMineCount() == -1)
+                            if (this.minesweeperCells[row][column].getMineCount() == -1)
                             {
                                 this.failed = true;
+                                this.uncover_all_mines();
                             }
-                            else if(this.minesweepterCells[row][column].getMineCount() == 0)
+                            else if(this.minesweeperCells[row][column].getMineCount() == 0)
                             {
-                                // uncover nearby cells
+                                this.uncover_nearby_cells(row, column);
                             }
                         }
                     }
                     // marking mode
                     else
                     {
-                        if(this.minesweepterCells[row][column].isCovered())
+                        if(this.minesweeperCells[row][column].isCovered())
                         {
-                            if(!this.minesweepterCells[row][column].isMarked())
+                            if(!this.minesweeperCells[row][column].isMarked())
                             {
                               if(this.checkMarkedCount())
                               {
-                                  this.minesweepterCells[row][column].setMarked(true);
+                                  this.minesweeperCells[row][column].setMarked(true);
                                   this.setMarkedCount(this.getMarkedCount() + 1);
                               }
                             }
-                            else if(this.minesweepterCells[row][column].isMarked())
+                            else if(this.minesweeperCells[row][column].isMarked())
                             {
-                                this.minesweepterCells[row][column].setMarked(false);
+                                this.minesweeperCells[row][column].setMarked(false);
                                 this.setMarkedCount(this.getMarkedCount() -1);
                             }
 
@@ -270,6 +275,53 @@ public class MinesweeperCustomView extends View
         }
         invalidate();
         return true;
+    }
+
+    private void uncover_all_mines()
+    {
+        for (int i = 0; i < this.minesweeperCells.length; i++)
+        {
+            for (int j = 0; j < this.minesweeperCells[i].length; j++)
+            {
+                if( this.minesweeperCells[i][j].getMineCount() == -1)
+                {
+                    this.minesweeperCells[i][j].setCovered(false);
+                }
+            }
+        }
+    }
+
+
+    private void uncover_nearby_cells(int row, int column)
+    {
+        for(int i = -1; i < 2; i++)
+        {
+            for(int j = -1; j < 2; j++)
+            {
+                if(row+i < 0 || row+i >= this.minesweeperCells.length ||
+                        column+j < 0 || column+j >= this.minesweeperCells.length)
+                {
+                    continue;
+                }
+                if(this.minesweeperCells[row+i][column+j].isCovered())
+                {
+                    this.minesweeperCells[row+i][column+j].setCovered(false);
+                    if(this.minesweeperCells[row+i][column+j].isMarked())
+                    {
+                        this.minesweeperCells[row+i][column+j].setMarked(false);
+                        this.setMarkedCount(this.getMarkedCount() + -1);
+                    }
+
+                    if(this.minesweeperCells[row+i][column+j].getMineCount() == 0)
+                    {
+                        uncover_nearby_cells(row+i, column+j);
+                    }
+                }
+
+
+
+            }
+        }
     }
 
     @Override
@@ -357,8 +409,6 @@ public class MinesweeperCustomView extends View
         float bottom = (float) (((row+1) *this.cell_width_height) - CELL_PADDING);
 
         canvas.drawRect(left, top, right, bottom, cellBackgroundColor);
-        // Log.d("dqwdq", "height: " + (bottom-top) + " width: " + (right-left) + " row " + row + " column: " + column);
-
 
     }
     public void drawCell(Canvas canvas, int row, int column, Paint cellBackgroundColor, String cellText, Paint cellTextColor)
@@ -390,22 +440,18 @@ public class MinesweeperCustomView extends View
     public boolean isFailed() {
         return failed;
     }
-
     public void setFailed(boolean failed) {
         this.failed = failed;
     }
-
     public boolean isUncoverMode() {
         return uncoverMode;
     }
-
     public void setUncoverMode(boolean uncoverMode) {
         this.uncoverMode = uncoverMode;
     }
     public int getMarkedCount() {
         return markedCount;
     }
-
     public void setMarkedCount(int markedCount)
     {
         for(IMinesMarkedCountListener listener : this.markedCountListeners)
@@ -422,8 +468,6 @@ public class MinesweeperCustomView extends View
     {
         this.markedCountListeners.remove(listener);
     }
-
-
     public interface IMinesMarkedCountListener
     {
         void onMarkedCountChanged(int count);

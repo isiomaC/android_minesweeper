@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity
     private Button btnReset;
     private Button btnClickMode;
 
-    private MinesweepterCell[][] minesweeperCells;
+    private MinesweeperCell[][] minesweeperCells;
     private ArrayList<Point> mines;
 
     @Override
@@ -36,9 +36,7 @@ public class MainActivity extends AppCompatActivity
     private void initViews()
     {
         this.minesweeperCustomView = (MinesweeperCustomView) findViewById(R.id.minesweepter_custom_view);
-
         this.numberOfMines = (TextView) findViewById(R.id.number_mines);
-
         this.numberOfMinesMarked = (TextView) findViewById(R.id.number_mines_marked);
         this.btnReset = (Button) findViewById(R.id.btn_reset);
         this.btnClickMode = (Button) findViewById(R.id.btn_click_mode);
@@ -78,11 +76,11 @@ public class MainActivity extends AppCompatActivity
         this.minesweeperCustomView.setUncoverMode(!this.minesweeperCustomView.isUncoverMode());
         if(this.minesweeperCustomView.isUncoverMode())
         {
-            this.btnClickMode.setText("Marking Mode");
+            this.btnClickMode.setText(R.string.marking_mode);
         }
         else
         {
-            this.btnClickMode.setText("Uncover Mode");
+            this.btnClickMode.setText(R.string.uncover_mode);
         }
 
     }
@@ -92,17 +90,17 @@ public class MainActivity extends AppCompatActivity
         this.initCells();
         this.minesweeperCustomView.setFailed(false);
         this.minesweeperCustomView.setUncoverMode(true);
-        this.btnClickMode.setText("Marking Mode");
-        String text = getString(R.string.number_mines_marked, 0);
-        this.numberOfMinesMarked.setText(text);
+        this.btnClickMode.setText(R.string.marking_mode);
+       // String text = getString(R.string.number_mines_marked, 0);
+       // this.numberOfMinesMarked.setText(text);
         this.minesweeperCustomView.setMarkedCount(0);
-        String totalMines = getString(R.string.number_mines_marked, this.getTotalNumberOfMines());
+        String totalMines = getString(R.string.total_number_of_mines, this.getTotalNumberOfMines());
         this.numberOfMines.setText(totalMines);
     }
     // init the two dimensional array of minesweepercells
     private void initCells()
     {
-        this.minesweeperCells = new MinesweepterCell[ROWS_COLUMNS][ROWS_COLUMNS];
+        this.minesweeperCells = new MinesweeperCell[ROWS_COLUMNS][ROWS_COLUMNS];
         int k = 0;
         mines = new ArrayList<>();
         while(k < N_MINES)
@@ -122,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         {
             for(int j = 0; j < this.minesweeperCells[i].length; j++)
             {
-                this.minesweeperCells[i][j] = new MinesweepterCell(false, true, getMineCount(i,j), i, j);
+                this.minesweeperCells[i][j] = new MinesweeperCell(false, true, getMineCount(i,j), i, j);
             }
         }
         this.minesweeperCustomView.setArray(this.minesweeperCells);
@@ -141,7 +139,8 @@ public class MainActivity extends AppCompatActivity
             {
                 for(int j = -1; j < 2; j++)
                 {
-                    if(row+i < 0 || row+i > 10 || column+j < 0 || column+j > 10)
+                    if(row+i < 0 || row+i > this.minesweeperCells.length ||
+                            column+j < 0 || column+j > this.minesweeperCells.length)
                     {
                         continue;
                     }

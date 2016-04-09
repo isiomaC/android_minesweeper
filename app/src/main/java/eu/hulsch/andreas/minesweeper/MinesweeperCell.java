@@ -3,7 +3,7 @@ package eu.hulsch.andreas.minesweeper;
 /**
  * Created by murphy on 08.04.2016.
  */
-public class MinesweepterCell
+public class MinesweeperCell
 {
     private boolean covered;
     private boolean marked;
@@ -13,7 +13,7 @@ public class MinesweepterCell
     private int column;
 
 
-    public MinesweepterCell(boolean marked, boolean covered, int mineCount, int row, int column)
+    public MinesweeperCell(boolean marked, boolean covered, int mineCount, int row, int column)
     {
         this.marked = marked;
         this.covered = covered;
